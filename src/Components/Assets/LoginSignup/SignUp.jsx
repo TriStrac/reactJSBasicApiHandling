@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './LoginSignUp.css';
+import { createAccount } from '../../Service/ApiService'; // Import the createAccount function
 
 export const SignUp = () => {
     const [formData, setFormData] = useState({
@@ -8,7 +9,7 @@ export const SignUp = () => {
         firstName: '',
         middleName: '',
         lastName: '',
-        birthDate: '',
+        birthdate: '', // Adjusted to match the API field name
         street: '',
         barangay: '',
         province: '',
@@ -24,10 +25,20 @@ export const SignUp = () => {
         });
     };
 
-    const handleSubmit = () => {
-        // Add your form submission logic here
-        alert(JSON.stringify(formData, null, 2));
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await createAccount(formData);
+            alert(`Account created: ${response.Message}`);
+        } catch (error) {
+            if (error.response && error.response.data && error.response.data.Message) {
+                alert(`Account creation failed: ${error.response.data.Message}`);
+            } else {
+                alert(`Account creation failed: ${error.message}`);
+            }
+        }
     };
+    
 
     return (
         <div className="container">
@@ -35,46 +46,48 @@ export const SignUp = () => {
                 <div className="text">Sign Up</div>
                 <div className="underline"></div>
             </div>
-            <div className="inputs">
+            <form className="inputs" onSubmit={handleSubmit}>
                 <div className='input'>
-                    <input type="email" name="email" placeholder='Email' onChange={handleChange} />
+                    <input type="email" name="email" placeholder='Email' onChange={handleChange} required />
                 </div>
                 <div className='input'>
-                    <input type="password" name="password" placeholder='Password' onChange={handleChange} />
+                    <input type="password" name="password" placeholder='Password' onChange={handleChange} required />
                 </div>
                 <div className='input'>
-                    <input type="text" name="firstName" placeholder='First Name' onChange={handleChange} />
+                    <input type="text" name="firstName" placeholder='First Name' onChange={handleChange} required />
                 </div>
                 <div className='input'>
                     <input type="text" name="middleName" placeholder='Middle Name' onChange={handleChange} />
                 </div>
                 <div className='input'>
-                    <input type="text" name="lastName" placeholder='Last Name' onChange={handleChange} />
+                    <input type="text" name="lastName" placeholder='Last Name' onChange={handleChange} required />
                 </div>
                 <div className='input'>
-                    <input type="date" name="birthDate" placeholder='Birth Date' onChange={handleChange} />
+                    <input type="date" name="birthdate" placeholder='Birth Date' onChange={handleChange} required /> {/* Adjusted to match the API field name */}
                 </div>
                 <div className='input'>
-                    <input type="text" name="street" placeholder='Street' onChange={handleChange} />
+                    <input type="text" name="street" placeholder='Street' onChange={handleChange} required />
                 </div>
                 <div className='input'>
-                    <input type="text" name="barangay" placeholder='Barangay' onChange={handleChange} />
+                    <input type="text" name="barangay" placeholder='Barangay' onChange={handleChange} required />
                 </div>
                 <div className='input'>
-                    <input type="text" name="province" placeholder='Province' onChange={handleChange} />
+                    <input type="text" name="province" placeholder='Province' onChange={handleChange} required />
                 </div>
                 <div className='input'>
-                    <input type="text" name="city" placeholder='City' onChange={handleChange} />
+                    <input type="text" name="city" placeholder='City' onChange={handleChange} required />
                 </div>
                 <div className='input'>
-                    <select name="type" onChange={handleChange}>
+                    <select name="type" onChange={handleChange} required>
                         <option value="">Select Type</option>
                         <option value="owner">Owner</option>
                         <option value="customer">Customer</option>
                     </select>
                 </div>
-                <div className='submit' onClick={handleSubmit}>Sign Up</div>
-            </div>
+                <div className='submit'>
+                    <button type="submit">Sign Up</button>
+                </div>
+            </form>
         </div>
     );
 };

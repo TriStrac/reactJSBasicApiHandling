@@ -1,21 +1,36 @@
 import React, { useState } from 'react'
 import './LoginSignUp.css'
+import { loginAccount } from '../../Service/ApiService';
 
 export const Login = () => {
-    const[email, setEmail] = useState('')
-    const[password,setPassword] = useState('')
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
-    function loginUser(){
-        alert(`${email}: ${password}`)
-    }
+    const alertMessage = (val) => {
+        alert(`${val}`);
+    };
 
-    function getEmail(val){
-        setEmail(val.target.value)
-    }
-    function getPassword(val){
-        setPassword(val.target.value)
-    }
-    
+    const getEmail = (val) => {
+        setEmail(val.target.value);
+    };
+
+    const getPassword = (val) => {
+        setPassword(val.target.value);
+    };
+
+    const handleLogin = async (event) => {
+        event.preventDefault();
+        try {
+            const response = await loginAccount({ email, password });
+            alertMessage(response.Message);
+        } catch (error) {
+            if (error.response && error.response.data && error.response.data.Message) {
+                alertMessage(`Login failed: ${error.response.data.Message}`);
+            } else {
+                alertMessage(`Login failed: ${error.message}`);
+            }
+        }
+    };
   return (
     <div className="container">
         <div className="header">
@@ -30,7 +45,7 @@ export const Login = () => {
                 <input type="password" placeholder='Password' onChange={getPassword}/>
             </div>
             
-            <div className='submit' onClick={loginUser}>Login</div>
+            <div className='submit' onClick={handleLogin}>Login</div>
         </div>
     </div>
     
